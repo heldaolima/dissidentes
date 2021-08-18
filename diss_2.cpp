@@ -217,7 +217,7 @@ bool Grafo::addcelasUnidas(int a, int dest, int adj)
 
 int main()
 {
-    cout << "---<PROBLEMA DOS DISSIDENTES POLÍTICOS v2>---\n";
+    cout << "---<PROBLEMA DOS DISSIDENTES POLÍTICOS>---\n";
     
     Grafo g(TOT_VERTICES);
     //construção do grafo:
