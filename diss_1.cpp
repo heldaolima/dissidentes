@@ -9,26 +9,26 @@ using namespace std;
 
 class Grafo
 {
-    int V; //n de vertices;
+    int V; //numero de vertices;
     list<int> *adj; //ponteiro pra array de listas de adjacência
-
+                    //com a lista de adjacência, o índice significa a cela e cada item da lista nele corresponde às celas adjacentes
 public:
     Grafo(int V); //construtor
 
-    void addAresta(int v, int w); //add aresta
+    void addAresta(int v, int w); 
     int fuga(int s);
-    void print(); //imprime os vértices do grafo e os seus adjacentes
+    void print(); 
 };
 
 Grafo::Grafo(int V) //inicializa o grafo
 {
     this->V = V;
-    adj = new list<int>[V]; 
+    adj = new list<int>[V]; //equivalente em c++ do malloc em C; adj recebe V espaços do tamanho de list<int> 
 }
 
 void Grafo::addAresta(int a, int b) //adiciona aresta entre os vertices a e b
 { //grafo nao-direcionado: pode-se ir de a para b e de b para a 
-    adj[a].push_back(b); 
+    adj[a].push_back(b);
     adj[b].push_back(a);
 }
 
@@ -82,15 +82,9 @@ void Grafo::print()
     list<int>::iterator i;
     while (v < V)
     {
-        string s = converte(v);
-        
-        cout << "No vértice " << s << ": ";
+        cout << "No vértice " << converte(v) << ": ";
         for (i = adj[v].begin(); i != adj[v].end(); ++i)
-        {
-            string adj = converte(*i);
-            cout << adj << " ";
-        }
-        
+            cout << converte(*i) << " ";
         cout << endl;
         v++;
     }
@@ -102,21 +96,17 @@ void imprimeFila(list<int> fila)
     list<int>::iterator i;
     string cela;
     for (i = fila.begin(); i != fila.end(); i++)
-    {
-        cela = converte(*i);
-        cout << cela << " ";
-    }
+        cout << converte(*i) << " ";
     cout << endl;
 }
 
 int Grafo::fuga(int s)
 //algoritmo de busca em largura modificado para mostrar o caminho da cela s até a saída, passando por todas as celas
 {
-    
     bool *visited = new bool[V]; //array da quantidade de vertices, para representar os visitados
-    for (int i = 0; i < V; i++)
-        visited[i] = false; //inicialmente, todos são falsos (nenhum foi visitado ainda)
-    
+    for(int i = 0; i < V; i++)
+        visited[i] = false; //mais uma vez, cada indice representa uma sala; inicialmente, nenhuma foi visitada, então são todas false
+
     list<int> fila; //fila útil para o algoritmo
 
     visited[s] = true; //marca o atual como visitado
@@ -124,7 +114,7 @@ int Grafo::fuga(int s)
 
     list<int>::iterator i; //ponteiro
 
-    int cont_arestas = 0; //contador de arestas, para saber quantos portões foram quebrados
+    int cont_portoes = 0; //contador de portões (arestas), para saber quantos portões foram quebrados
     
     while(!fila.empty()) //fila vazia significa que todos foram visitados
     {
@@ -132,26 +122,28 @@ int Grafo::fuga(int s)
 
         s = fila.front(); //a nossa referência é o primeiro elemento da fila
         
-        string cela = converte(s);
-        cout << cela << " -> "; //imprimo o item, que já foi visitado
+        cout << converte(s) << " -> "; //imprimo o item, que já foi visitado
         fila.pop_front(); //e removo-o.
 
         //pega todos os vértices adjacentes ao vértice que acabou de ser desenfileirado (s)
         //Se o vértice não foi visitado, então marca como visitado e o
-        //coloca na fila
+        //coloca na fila, para que se passe por ele mais tarde, ainda que ele já esteja visitado
         for (i = adj[s].begin(); i != adj[s].end(); ++i)
         {
             if (!visited[*i])
             {
+                cout << "Marcado como visitado: " << converte(*i) << endl;
                 visited[*i] = true;
-                cont_arestas++;
+
+                cont_portoes++;
+                
                 if (*i != SAIDA) //nao adiciono a saída na fila, para garantir que eles passem por ela só no fim
                     fila.push_back(*i);
             }
         }
     }
     cout << "saida\n";
-    return cont_arestas;
+    return cont_portoes;
 }
 
 int main()
@@ -160,38 +152,28 @@ int main()
     Grafo g(TOT_VERTICES);
     g.addAresta(0, 5);
     g.addAresta(0, 10);
-
     g.addAresta(1, 4);
     g.addAresta(1, 4);
     g.addAresta(1, 5);
     g.addAresta(1, 10);
-
     g.addAresta(2, 3);
     g.addAresta(2, 10);
-
     g.addAresta(3, 4);
     g.addAresta(3, 9);
-    
     g.addAresta(4, 6);
     g.addAresta(4, 8);
     g.addAresta(4, 9);
-
     g.addAresta(5, 6);
-
     g.addAresta(6, 7);
     g.addAresta(6, 8);
     g.addAresta(6, 10);
-
     g.addAresta(7, 10);
-
     g.addAresta(8, 9);
     g.addAresta(8, 10);
-    
     g.addAresta(9, 10);
 
     // g.print();
-    // cout << endl << endl;
-
+    
     int inicio;
     
     cout << "Escolha a cela a partir da qual se iniciará o processo de fuga [0, " << N_CELAS -1 << "]: ";
@@ -229,5 +211,4 @@ que encontraram para ela foi destruído, para que possam voltar até ele depois 
 completarem o grupo.
 
 R: Assim, com esse número de celas, o número mínimo de portões é sempre 10.
-
 */
