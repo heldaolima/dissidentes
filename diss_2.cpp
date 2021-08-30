@@ -1,12 +1,11 @@
 #include <iostream>
-#include <list> 
+#include <list>
 
 using namespace std;
 
 #define TOT_VERTICES 11 
 #define N_CELAS 10
 #define SAIDA 10
-
 
 //este tipo tenta dar conta dos casos em que uma explosão libera mais de uma cela
 typedef struct {
@@ -40,7 +39,7 @@ Grafo::Grafo(int V) //inicializa o grafo
 
 void Grafo::addAresta(int a, int b) //adiciona aresta entre os vertices a e b
 { //grafo nao-direcionado: vai a para b e de b para a 
-    adj[a].push_back(b); 
+    adj[a].push_back(b); //pushback == adicionar no final
     adj[b].push_back(a);
 }
 
@@ -89,18 +88,17 @@ string converte(int i) //seguindo a convencao da questao, converte um indice em 
 }
 
 void Grafo::print()
-{
-    int v = 0;
+{ //imprimir o array de listas de adjacência
+
     list<int>::iterator i;
-    while (v < V)
+    for (int j = 0; j < V; j++)
     {
-        string s = converte(v);
+        cout << "No vértice " << converte(j) << ": ";
         
-        cout << "No vértice " << s << ": ";
-        for (i = adj[v].begin(); i != adj[v].end(); ++i)
+        for (i = adj[j].begin(); i != adj[j].end(); ++i)
             cout << converte(*i) << " ";
+        
         cout << endl;
-        v++;
     }
 }
 
@@ -124,12 +122,12 @@ int Grafo::fuga(int ini, bool imprimir)
         visited[i] = false; //cada indice representa uma sala, como na lista de adjacência;
                             //inicialmente, nenhuma foi visitada, então são todas false
     
-    list<int> fila; //fila útil para o algoritmo
+    list<int> fila; //fila útil para o algoritmo 
 
     visited[ini] = true; //marca o inicial como visitado 
     fila.push_back(ini); //coloca-o na fila
 
-    list<int>::iterator i; //ponteiro para iterar por listas de inteiro
+    list<int>::iterator i; //ponteiro para iterar por listas de inteiro (para lista adj)
     list<celasUnidas>::iterator j; //para iterar pela lista de paredes 
 
     int cont_explosoes = 0; //contador de explosões
@@ -138,7 +136,6 @@ int Grafo::fuga(int ini, bool imprimir)
     {
         // imprimeFila(fila);
         ini = fila.front(); //vertice "atual"
-        
         if (imprimir)
             cout << converte(ini) << " -> "; //imprime o item atual, visitado
         
@@ -152,7 +149,7 @@ int Grafo::fuga(int ini, bool imprimir)
             if (!visited[*i])
             {
                 visited[*i] = true; //marca o vértice
-
+                
                 //sendo 'ini' a cela atual e '*i' um seu adjacente, entre os quais há uma parede, 
                 //pode ser que no caminho de ini para *i a explosão acabe liberando outra cela
                 //entao procura na lista de paredes unidas o vertice ini e vejo se ele tem *i como destino
@@ -162,7 +159,7 @@ int Grafo::fuga(int ini, bool imprimir)
                 {
                     if (j->vertice == ini && j->dest == *i) 
                     {
-                        // cout << "\nvertice: " << j->vertice << " dest: " << j->dest << " adj: " << j->adj << endl; //verifica-se o exposto acima
+                        // cout << "\nvertice: " << converte(j->vertice) << " dest: " << converte(j->dest) << " adj: " << converte(j->adj) << endl; //verifica-se o exposto acima
                         if (!visited[j->adj])
                         {
                             visited[j->adj] = true; //a cela que se liberou 'por acidente' é marcada como visitada
@@ -218,12 +215,11 @@ bool Grafo::addcelasUnidas(int a, int dest, int adj)
 int main()
 {
     cout << "---<PROBLEMA DOS DISSIDENTES POLÍTICOS>---\n";
-    
+
     Grafo g(TOT_VERTICES);
     //construção do grafo:
     g.addAresta(0, 5);
     g.addAresta(0, 10);
-    g.addAresta(1, 4);
     g.addAresta(1, 4);
     g.addAresta(1, 5);
     g.addAresta(1, 10);
@@ -244,9 +240,9 @@ int main()
     g.addAresta(9, 10);
 
     // g.print();
-    cout << endl;
-
-    //informar quais são os casos de "celas unidas" no mapa
+    cout << endl; 
+    
+    // informar quais são os casos de "celas unidas" no mapa
     g.addcelasUnidas(1, 3, 4);
     g.addcelasUnidas(1, 4, 3);
     g.addcelasUnidas(1, 5, 6);
@@ -263,7 +259,7 @@ int main()
     g.addcelasUnidas(6, 4, 5);
 
     int escolha;
-    
+
     cout << "[1] Escolher uma cela por onde começar a fuga\n";
     cout << "[2] Encontrar o menor número de paredes possível\n";
     cout << "[3] Encerrar\n";
